@@ -26,7 +26,7 @@ class ConstantInfo {
     }
 
     public String getIdentifier() {
-        return (group + "_" + key).toUpperCase();
+        return (group + "_" + key).replace('.', '_').toUpperCase();
     }
 }
 
