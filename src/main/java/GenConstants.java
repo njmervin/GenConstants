@@ -1,10 +1,7 @@
 import org.apache.commons.cli.*;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 class ConstantInfo {
     public String group;
@@ -33,6 +30,7 @@ class ConstantInfo {
 public class GenConstants {
     private static String output_package;
     private static String output_name;
+    private static ArrayList<String> group_order_list = new ArrayList<String>();
     private static Map<String, List<ConstantInfo>>  output_constants = new HashMap<String, List<ConstantInfo>>();
 
     public static void main(String[] args) throws ParseException, IOException {
@@ -64,6 +62,13 @@ public class GenConstants {
             System.err.println("$name not found!");
             return;
         }
+
+        //sort group
+        for(String group : output_constants.keySet()) {
+            group_order_list.add(group);
+        }
+        Collections.sort(group_order_list);
+
 
         String lang = cmd.getOptionValue("lang");
         if(lang.equalsIgnoreCase("Java"))
@@ -151,7 +156,8 @@ public class GenConstants {
         out.println();
         out.println("public class " + output_name + " {");
 
-        for(List<ConstantInfo> list : output_constants.values()) {
+        for(String key : group_order_list) {
+            List<ConstantInfo> list = output_constants.get(key);
             int[] lens = getKeyValueLength(list);
 
             for(ConstantInfo info : list) {
@@ -195,7 +201,8 @@ public class GenConstants {
         out.println("{");
         out.println("public:");
 
-        for(List<ConstantInfo> list : output_constants.values()) {
+        for(String key : group_order_list) {
+            List<ConstantInfo> list = output_constants.get(key);
             int[] lens = getKeyValueLength(list);
 
             for(ConstantInfo info : list) {
