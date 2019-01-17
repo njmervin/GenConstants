@@ -149,7 +149,10 @@ public class GenConstants {
     }
 
     private static void outputJava(String outdir) throws IOException {
-        File file = new File(outdir + "\\" + output_package.replace('.', '\\') + "\\" + output_name + ".java");
+        String path = outdir + "\\" + output_package.replace('.', '\\');
+        new File(path).mkdirs();
+
+        File file = new File(path + "\\" + output_name + ".java");
         PrintStream out = new PrintStream(file, "utf-8");
 
         out.println("package " + output_package + ";");
@@ -192,6 +195,8 @@ public class GenConstants {
     }
 
     private static void outputCpp(String outdir) throws IOException {
+        new File(outdir).mkdirs();
+
         File file = new File(outdir + "\\" + output_name.toLowerCase() + ".h");
         PrintStream out = new PrintStream(file, "utf-8");
 
