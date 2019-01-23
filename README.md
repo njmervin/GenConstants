@@ -1,7 +1,7 @@
 ﻿# GenConstants
 Generate constant definitions for various programming languages through configuration file.
 
-## usage
+## Usage
 ```
 usage: java -jar GenConstants [option]
  -h,--help         print help
@@ -10,7 +10,7 @@ usage: java -jar GenConstants [option]
     --out <arg>    constant definition file path
 ```
 
-## configuration file syntax
+## Configuration File Syntax
 
 ```
 $package=zen.puzzle
@@ -30,7 +30,31 @@ generated class name
 **constant define format** \
 \<group>.\<key>=\<value> #\<comment>
 
-## output sample
+## Other Syntax
+### $autoid
+```
+$autoid=<Initial Value>
+```
+Items that are not assigned immediately after $autoid line are automatically incremented, 
+If encounter an item that has been assigned, it will stop automatically assigning.
+```
+#Example
+
+$autoid=1
+
+field.env.autologin
+field.env.client_id
+field.env.client_session_id
+field.env.ip
+field.env.mac
+field.env.machine_name
+field.env.session_id
+field.env.authcode_cooldown
+field.env.authcode
+
+```
+
+## Output Sample
 ### Java
 ```
 java -jar GenConstants-1.0.0.jar --lang Java --in "D:\Code\github\puzzle\docs\constants.properties" --out "D:\Code\github\puzzle\puzzleserver\src\main\java"
