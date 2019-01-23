@@ -133,55 +133,85 @@ public class GenConstants {
         }
     }
 
+    private static ConstantInfo parseLine(String line) {
+        int pos;
+        String group = "", key = "", value = "", comment = "";
+
+        pos = line.indexOf('#');
+        if(pos != -1) {
+            comment = line.substring(pos + 1).trim();
+            line = line.substring(0, pos);
+        }
+
+        pos = line.indexOf('=');
+        if(pos != -1) {
+            value = line.substring(pos + 1).trim();
+            line = line.substring(0, pos).trim();
+        }
+
+        pos = line.indexOf('.');
+        if(pos != -1) {
+            key = line.substring(pos + 1).trim();
+            group = line.substring(0, pos).trim();
+        }
+        else {
+            key = line.trim();
+        }
+
+        if(key.isEmpty())
+            return null;
+
+        ConstantInfo info = new ConstantInfo();
+        info.group = group;
+        info.key = key;
+        info.value = value;
+        info.comment = comment;
+        return info;
+    }
+
     private static void parseInput(String inputfile) throws IOException {
+        boolean use_autoid = false;
+        long autoid = 0;
         String line;
         BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(inputfile),"UTF-8"));
 
         while((line = in.readLine()) != null) {
-            line = line.trim();
-            if(line.isEmpty()) {
+            ConstantInfo info = parseLine(line);
+            if(info == null)
+                continue;
+
+            if(info.key.equals("$package")) {
+                output_package = info.value;
+                continue;
+            }
+            else if(info.key.equals("$name")) {
+                output_name = info.value;
+                continue;
+            }
+            else if(info.key.equals("$autoid")) {
+                use_autoid = true;
+                if(info.value.isEmpty())
+                    autoid = 1;
+                else {
+                    autoid = Long.parseLong(info.value);
+                }
                 continue;
             }
 
-            int pos;
-            String group = "", key = "", value = "", comment = "";
-
-            pos = line.indexOf('#');
-            if(pos != -1) {
-                comment = line.substring(pos + 1).trim();
-                line = line.substring(0, pos);
+            if(info.value.isEmpty()) {
+                if(use_autoid)
+                    info.value = Long.toString(autoid++);
+                else
+                    continue;
+            }
+            else {
+                use_autoid = false;
             }
 
-            pos = line.indexOf('=');
-            if(pos == -1)
-                continue;
-            value = line.substring(pos + 1).trim();
-            line = line.substring(0, pos).trim();
-            if(line.equals("$package")) {
-                output_package = value;
-                continue;
-            }
-            else if(line.equals("$name")) {
-                output_name = value;
-                continue;
-            }
-
-            pos = line.indexOf('.');
-            if(pos == -1)
-                continue;
-            key = line.substring(pos + 1);
-            group = line.substring(0, pos);
-
-            ConstantInfo info = new ConstantInfo();
-            info.group = group;
-            info.key = key;
-            info.value = value;
-            info.comment = comment;
-
-            List<ConstantInfo> list = output_constants.get(group.toLowerCase());
+            List<ConstantInfo> list = output_constants.get(info.group.toLowerCase());
             if(list == null) {
                 list = new ArrayList<ConstantInfo>();
-                output_constants.put(group.toLowerCase(), list);
+                output_constants.put(info.group.toLowerCase(), list);
             }
             list.add(info);
         }
