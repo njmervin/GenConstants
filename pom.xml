@@ -6,7 +6,7 @@
 
     <groupId>la.zen</groupId>
     <artifactId>GenConstants</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.1</version>
     <build>
         <plugins>
             <plugin>

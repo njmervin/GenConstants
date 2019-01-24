@@ -23,7 +23,10 @@ class ConstantInfo {
     }
 
     public String getIdentifier() {
-        return (group + "_" + key).replace('.', '_').toUpperCase();
+        if(group.isEmpty())
+            return key.replace('.', '_').toUpperCase();
+        else
+            return (group + "_" + key).replace('.', '_').toUpperCase();
     }
 
     public String getPrefix(String lang) {
