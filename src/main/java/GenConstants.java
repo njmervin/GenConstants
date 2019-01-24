@@ -47,7 +47,14 @@ class ConstantInfo {
                     byte[] bytes = value.substring(1, value.length() - 1).getBytes("utf-8");
                     StringBuilder sb = new StringBuilder(bytes.length * 3);
                     sb.append('"');
+                    boolean escape = false;
                     for(int b : bytes) {
+                        if(b >= 0x20 && b <= 0x7e) {
+                            sb.append((char)b);
+                            continue;
+                        }
+
+                        escape = true;
                         sb.append("\\x");
                         b = (b + 256 ) % 256;
                         if(b < 0x10) {
@@ -58,6 +65,10 @@ class ConstantInfo {
                             sb.append(Integer.toHexString(b));
                     }
                     sb.append('"');
+
+                    if(escape && comment.isEmpty())
+                        comment = value;
+
                     return sb.toString();
                 } catch (UnsupportedEncodingException e) {
                     return null;
@@ -71,13 +82,6 @@ class ConstantInfo {
     }
 
     public String getComment(String lang) {
-        if(value.startsWith("\"")) {
-            if(lang.equalsIgnoreCase("C++")) {
-                if (comment == null || comment.isEmpty())
-                    return value;
-            }
-        }
-
         return comment;
     }
 }
